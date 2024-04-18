@@ -1,9 +1,11 @@
 package ChatRoom.Client;
 
 import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class ChatRoomClient {
     private String name;
@@ -14,10 +16,59 @@ public class ChatRoomClient {
     private BufferedReader inputStream;
 
     public ChatRoomClient() {
+    }
 
+    public void startConnection() {
+        try {
+            clientSocket = new Socket(getIp(),getPort());
+
+            inputStream = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
+            outputStream = new PrintWriter(clientSocket.getOutputStream(),true);
+        } catch (IOException e) {
+            // TODO: Add exception handle for network connectivity error
+        }
     }
 
 
+    public void stopConnection() {
+        try {
+            clientSocket.close();
+            outputStream.close();
+            inputStream.close();
+        } catch (IOException e) {
+            // TODO: Add exception handle
+        }
+
+    }
+
+    public void sendMessage(String message) {
+        String serverMessage;
+
+        outputStream.println(message);
+
+        try {
+            serverMessage = inputStream.readLine();
+
+            receiveMessage(serverMessage);
+
+        } catch (IOException e) {
+            // TODO: Add exception handle for server side broadcast
+        }
+    }
+
+
+    public void receiveMessage(String message) {
+        System.out.println(message);
+    }
+
+    public void receiveMessage() {
+        try {
+            System.out.println(inputStream.readLine());
+        } catch (IOException e) {
+            // TODO: Add exception handle for server side broadcast
+        }
+    }
 
     public String getName() {
         return name;
@@ -66,4 +117,24 @@ public class ChatRoomClient {
     public void setInputStream(BufferedReader inputStream) {
         this.inputStream = inputStream;
     }
+
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        ChatRoomClient client = new ChatRoomClient();
+
+        client.setName("Client 1");
+        client.setIp("127.0.0.1");
+        client.setPort(6666);
+
+        client.startConnection();
+
+        client.receiveMessage();
+
+        while(true) {
+            client.sendMessage(scanner.nextLine());
+        }
+    }
+
 }
