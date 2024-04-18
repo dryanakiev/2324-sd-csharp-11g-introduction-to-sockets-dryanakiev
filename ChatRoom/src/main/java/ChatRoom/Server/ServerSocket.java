@@ -1,25 +1,24 @@
 package ChatRoom.Server;
 
 import java.io.*;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.time.LocalDateTime;
 
-public class ChatRoomServer {
+public class ServerSocket {
     private String name;
     private String ip;
     private int port;
-    private ServerSocket serverSocket;
+    private java.net.ServerSocket serverSocket;
     private Socket clientSocket;
     private PrintWriter outputStream;
     private BufferedReader inputStream;
 
-    public ChatRoomServer() {
+    public ServerSocket() {
     }
 
     public void startServer() {
         try {
-            serverSocket = new ServerSocket(getPort());
+            serverSocket = new java.net.ServerSocket(getPort());
 
             clientSocket = serverSocket.accept();
 
@@ -69,9 +68,9 @@ public class ChatRoomServer {
             }
 
             case 2: {
-                broadcastMessage("id,first_name,last_name,email,gender,ip_address\n" +
-                        "1,Bertie,Boxell,bboxell0@people.com.cn,Male,53.161.222.126\n" +
-                        "2,Rice,Ashmore,rashmore1@about.com,Male,160.254.167.201\n" +
+                broadcastMessage("id,first_name,last_name,email,gender,ip_address" +
+                        "1,Bertie,Boxell,bboxell0@people.com.cn,Male,53.161.222.126" +
+                        "2,Rice,Ashmore,rashmore1@about.com,Male,160.254.167.201" +
                         "3,Karrie,Stirzaker,kstirzaker2@noaa.gov,Female,36.190.240.204");
 
                 break;
@@ -82,6 +81,11 @@ public class ChatRoomServer {
 
                 stopServer();
 
+                break;
+            }
+
+            default: {
+                broadcastMessage("Server received: " + "\"" + clientMessage + "\"");
                 break;
             }
         }
@@ -132,11 +136,11 @@ public class ChatRoomServer {
         this.port = port;
     }
 
-    public ServerSocket getServerSocket() {
+    public java.net.ServerSocket getServerSocket() {
         return serverSocket;
     }
 
-    public void setServerSocket(ServerSocket serverSocket) {
+    public void setServerSocket(java.net.ServerSocket serverSocket) {
         this.serverSocket = serverSocket;
     }
 
@@ -165,7 +169,7 @@ public class ChatRoomServer {
     }
 
     public static void main(String[] args) {
-        ChatRoomServer server = new ChatRoomServer();
+        ServerSocket server = new ServerSocket();
 
         server.setPort(6666);
         server.startServer();
